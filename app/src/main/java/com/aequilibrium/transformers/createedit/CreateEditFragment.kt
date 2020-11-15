@@ -6,9 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.VisibleForTesting
+import androidx.core.os.bundleOf
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.Fragment
-import com.aequilibrium.transformers.MainActivity
+import com.aequilibrium.transformers.MainActivityInterface
 import com.aequilibrium.transformers.R
 import com.aequilibrium.transformers.data.model.Transformer
 
@@ -25,6 +26,9 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
     lateinit var etSkill : EditText
     lateinit var spTeam : Spinner
     lateinit var btnSubmit : Button
+    lateinit var editTransformer : Transformer
+    var mainInterface: MainActivityInterface? = null
+    var isEditing = false
     @VisibleForTesting
     val viewModel by lazy { CreateEditViewModel() }
     override fun onCreateView(
@@ -62,26 +66,68 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
             }
 
         }
+
+        (arguments?.get(Transformer::class.java.canonicalName) as? Transformer)?.let {
+           fillFieldsForEditting(it)
+        }
         btnSubmit.setOnClickListener(this)
 
         viewModel.run {
-            livedata.observeForever {
-                Toast.makeText(activity, "Transformer Created", Toast.LENGTH_SHORT).show()
-                (activity as MainActivity?)?.launchTransformerListFragment()
-            }
-                errorLiveData.observeForever {
-                    (activity as MainActivity?)?.launchErrorAlertDialog(it)
+            livedata.observe(requireActivity(), {
+                Toast.makeText(activity, if (isEditing) R.string.transformer_created else R.string.transformer_updated, Toast.LENGTH_SHORT).show()
+                mainInterface?.run {
+                    showProgressBar(false)
+                    launchTransformerListFragment()
                 }
+            })
+
+            errorLiveData.observe(requireActivity(), {
+                mainInterface?.run {
+                    showProgressBar(false)
+                    launchErrorAlertDialog(it)
+                }
+            })
         }
     }
 
+    private fun fillFieldsForEditting(transformer: Transformer){
+        editTransformer = transformer
+        tvTitle.text = getString(R.string.edit_transformer)
+        etName.setText(transformer.getName())
+        etStrength.setText(transformer.getStrength())
+        etIntelligence.setText(transformer.getIntelligence())
+        etSpeed.setText(transformer.getSpeed())
+        etEndurance.setText(transformer.getEndurance())
+        etRank.setText(transformer.getRank())
+        etCourage.setText(transformer.getRank())
+        etFirepower.setText(transformer.getFirepower())
+        etSkill.setText(transformer.getSkill())
+        val team = transformer.getTeam()
+        if (team == getString(R.string.a)){
+            spTeam.setSelection(0)
+        }else{
+            spTeam.setSelection(1)
+        }
+        btnSubmit.text = getString(R.string.edit_transformer)
+        isEditing = true
+    }
+
     companion object{
-        val instance = CreateEditFragment()
+        fun getCreateFragment(mainInterface : MainActivityInterface) : CreateEditFragment{
+            return CreateEditFragment().apply { this.mainInterface = mainInterface  }
+        }
+        fun getEditFragment(transformer: Transformer, mainInterface : MainActivityInterface) : CreateEditFragment{
+            return CreateEditFragment().apply {
+                arguments = bundleOf(Transformer::class.java.canonicalName to transformer)
+                this.mainInterface = mainInterface
+            }
+        }
     }
 
     override fun onClick(p0: View?) {
         if (validateFields()){
-            val tranformer = Transformer().apply {
+            mainInterface?.showProgressBar(true)
+            val transformer = Transformer().apply {
                 setName(etName.text.toString())
                 setStrength(etStrength.text.toString().toInt())
                 setIntelligence(etIntelligence.text.toString().toInt())
@@ -91,10 +137,15 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
                 setCourage(etCourage.text.toString().toInt())
                 setFirepower(etFirepower.text.toString().toInt())
                 setSkill(etSkill.text.toString().toInt())
-                setTeam(if(spTeam.selectedItemPosition == 0) "A" else "D")
+                setTeam(if(spTeam.selectedItemPosition == 0) getString(R.string.a) else getString(R.string.d))
+                if(isEditing)
+                    setId(editTransformer.getId())
             }
 
-            viewModel.createTransformer(tranformer)
+            if (!isEditing)
+                viewModel.createTransformer(transformer)
+            else
+                viewModel.editTransformer(transformer)
         }
     }
 
@@ -115,71 +166,71 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
         resetErrorMessages()
         when {
             etName.text.isEmpty() -> {
-                etName.error = "This field should not be empty"
+                etName.error = getString(R.string.error_empty_field)
                 return false
             }
             etStrength.text.isEmpty() -> {
-                etStrength.error = "This field should not be empty"
+                etStrength.error = getString(R.string.error_empty_field)
                 return false
             }
             !etStrength.text.isDigitsOnly() -> {
-                etStrength.error = "This field should only contain numbers"
+                etStrength.error = getString(R.string.error_digits_only)
                 return false
             }
             etIntelligence.text.isEmpty() -> {
-                etIntelligence.error = "This field should not be empty"
+                etIntelligence.error = getString(R.string.error_empty_field)
                 return false
             }
             !etIntelligence.text.isDigitsOnly() -> {
-                etIntelligence.error = "This field should only contain numbers"
+                etIntelligence.error = getString(R.string.error_digits_only)
                 return false
             }
             etSpeed.text.isEmpty() -> {
-                etSpeed.error = "This field should not be empty"
+                etSpeed.error = getString(R.string.error_empty_field)
                 return false
             }
             !etSpeed.text.isDigitsOnly() -> {
-                etSpeed.error = "This field should only contain numbers"
+                etSpeed.error = getString(R.string.error_digits_only)
                 return false
             }
             etEndurance.text.isEmpty() -> {
-                etEndurance.error = "This field should not be empty"
+                etEndurance.error = getString(R.string.error_empty_field)
                 return false
             }
             !etEndurance.text.isDigitsOnly() -> {
-                etEndurance.error = "This field should only contain numbers"
+                etEndurance.error = getString(R.string.error_digits_only)
                 return false
             }
             etRank.text.isEmpty() -> {
-                etRank.error = "This field should not be empty"
+                etRank.error = getString(R.string.error_empty_field)
                 return false
             }
             !etRank.text.isDigitsOnly() -> {
-                etRank.error = "This field should only contain numbers"
+                etRank.error = getString(R.string.error_digits_only)
                 return false
             }
             etCourage.text.isEmpty() -> {
-                etCourage.error = "This field should not be empty"
+                etCourage.error = getString(R.string.error_empty_field)
                 return false
             }
             !etCourage.text.isDigitsOnly() -> {
-                etCourage.error = "This field should only contain numbers"
+                etCourage.error = getString(R.string.error_digits_only)
                 return false
             }
             etFirepower.text.isEmpty() -> {
-                etFirepower.error = "This field should not be empty"
+                etFirepower.error = getString(R.string.error_empty_field)
                 return false
             }
             !etFirepower.text.isDigitsOnly() -> {
-                etFirepower.error = "This field should only contain numbers"
+                etFirepower.error = getString(R.string.error_digits_only)
                 return false
             }
             etSkill.text.isEmpty() -> {
-                etSkill.error = "This field should not be empty"
+                etSkill.error = getString(R.string.error_empty_field)
                 return false
             }
             !etSkill.text.isDigitsOnly() -> {
-                etSkill.error = "This field should only contain numbers"
+                etSkill.error = getString(R.string.error_digits_only)
                 return false
             }
             else -> return true

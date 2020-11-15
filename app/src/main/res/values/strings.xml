@@ -14,4 +14,29 @@
         <item>Autobots</item>
         <item>Decepticons</item>
     </array>
+
+    <string name="fight">Fight!!!</string>
+    <string name="transformer_created">Transformer Created</string>
+    <string name="transformer_updated">Transformer Updated</string>
+    <string name="create_transformer">Create Transformer</string>
+    <string name="edit_transformer">Edit Transformer</string>
+    <string name="name">Name</string>
+    <string name="strength">Strength</string>
+    <string name="intelligence">Intelligence</string>
+    <string name="speed">Speed</string>
+    <string name="endurance">Endurance</string>
+    <string name="rank">Rank</string>
+    <string name="courage">Courage</string>
+    <string name="firepower">Firepower</string>
+    <string name="skill">Skill</string>
+    <string name="team">Team</string>
+    <string name="submit">Submit</string>
+    <string name="a">A</string>
+    <string name="d">D</string>
+    <string name="overall">Overall</string>
+
+    <string name="error_empty_field">This field should not be empty</string>
+    <string name="error_digits_only">This field should only contain numbers</string>
+    <string name="error_dialog_title">An error has occurred</string>
+    <string name="error_dialog_button">Close</string>
 </resources>

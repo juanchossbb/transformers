@@ -2,7 +2,10 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="?android:attr/actionBarSize"
+    android:background="@color/white"
+    android:padding="@dimen/padding_10"
     >
 
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -12,7 +15,7 @@
     <TextView
         android:id="@+id/tv_create_edit_title"
         style="@style/TextView.Title"
-        android:text="Create Transformer"
+        android:text="@string/create_transformer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -20,7 +23,7 @@
     <TextView
         android:id="@+id/tv_label_name"
         style="@style/TextView.Label"
-        android:text="Name"
+        android:text="@string/name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_create_edit_title"/>
     <EditText
@@ -33,7 +36,7 @@
     <TextView
         android:id="@+id/tv_label_strength"
         style="@style/TextView.Label"
-        android:text="Strenght"
+        android:text="@string/strength"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_name"/>
     <EditText
@@ -47,7 +50,7 @@
     <TextView
         android:id="@+id/tv_label_intelligence"
         style="@style/TextView.Label"
-        android:text="Strength"
+        android:text="@string/intelligence"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_strength"/>
     <EditText
@@ -61,7 +64,7 @@
     <TextView
         android:id="@+id/tv_label_speed"
         style="@style/TextView.Label"
-        android:text="Speed"
+        android:text="@string/speed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_intelligence"/>
     <EditText
@@ -75,7 +78,7 @@
     <TextView
         android:id="@+id/tv_label_endurance"
         style="@style/TextView.Label"
-        android:text="Endurance"
+        android:text="@string/endurance"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_speed"/>
     <EditText
@@ -89,7 +92,7 @@
     <TextView
         android:id="@+id/tv_label_rank"
         style="@style/TextView.Label"
-        android:text="Rank"
+        android:text="@string/rank"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_endurance"/>
     <EditText
@@ -103,7 +106,7 @@
     <TextView
         android:id="@+id/tv_label_courage"
         style="@style/TextView.Label"
-        android:text="Courage"
+        android:text="@string/courage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_rank"/>
     <EditText
@@ -117,7 +120,7 @@
     <TextView
         android:id="@+id/tv_label_firepower"
         style="@style/TextView.Label"
-        android:text="Firepower"
+        android:text="@string/firepower"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_courage"/>
     <EditText
@@ -131,7 +134,7 @@
     <TextView
         android:id="@+id/tv_label_skill"
         style="@style/TextView.Label"
-        android:text="Skill"
+        android:text="@string/skill"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_firepower"/>
     <EditText
@@ -145,7 +148,7 @@
     <TextView
         android:id="@+id/tv_label_team"
         style="@style/TextView.Label"
-        android:text="Firepower"
+        android:text="@string/team"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_skill"/>
    <Spinner
@@ -160,7 +163,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Submit"
+        android:text="@string/submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sp_team"/>

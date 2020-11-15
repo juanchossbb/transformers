@@ -1,4 +1,4 @@
-package com.aequilibrium.transformers.createedit
+package com.aequilibrium.transformers.list
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,16 +8,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CreateEditViewModel : ViewModel(){
+class ListViewModel : ViewModel(){
     val repository = Repository()
-    val livedata = MutableLiveData<Transformer>()
+    val livedata = MutableLiveData<MutableList<Transformer>>()
+    val removeLiveData = MutableLiveData<Int>()
     val errorLiveData = MutableLiveData<String>()
 
-   fun createTransformer(transformer : Transformer){
+    fun getTransformerList(){
         CoroutineScope(Dispatchers.IO).launch {
-            repository.createTransformer(transformer).subscribe { result, error ->
-                if(result!=null) {
-                    livedata.postValue(result)
+            repository.retrieveTransformerList().subscribe { response, error ->
+                if (response!=null){
+                    livedata.postValue(response.transformers)
                 }else if(!error.message.isNullOrEmpty()){
                     errorLiveData.postValue(error.message)
                 }
@@ -25,13 +26,13 @@ class CreateEditViewModel : ViewModel(){
         }
     }
 
-    fun editTransformer(transformer: Transformer){
+    fun removeTransformer(transformer: Transformer){
         CoroutineScope(Dispatchers.IO).launch {
-            repository.editTransformer(transformer).subscribe { result, error ->
-                if (result != null){
-                    livedata.postValue(result)
+            repository.removeTransformer(transformer).subscribe { response, error ->
+                if (response!=null){
+                    removeLiveData.postValue(204)
                 }else if (error != null){
-                    errorLiveData.postValue(error.message)
+                    removeLiveData.postValue(401)
                 }
             }
         }

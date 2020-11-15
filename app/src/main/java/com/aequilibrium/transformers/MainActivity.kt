@@ -1,17 +1,19 @@
 package com.aequilibrium.transformers
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.aequilibrium.transformers.createedit.CreateEditFragment
+import com.aequilibrium.transformers.data.model.Transformer
+import com.aequilibrium.transformers.list.ListFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainActivityInterface {
     lateinit var fab : FloatingActionButton
+    lateinit var progressBar : ConstraintLayout
     @VisibleForTesting
     val viewModel by lazy { MainActivityViewModel() }
 
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
         fab = findViewById(R.id.fab)
+        progressBar = findViewById(R.id.cl_progress_bar)
     }
 
     override fun onStart() {
@@ -34,48 +37,45 @@ class MainActivity : AppCompatActivity() {
     private fun getToken(){
         viewModel.run {
             viewModel.getToken()
-            livedata.observeForever {
+            livedata.observe(this@MainActivity, {
                 launchTransformerListFragment()
-            }
-            errorLiveData.observeForever {
+            })
+            errorLiveData.observe(this@MainActivity, {
                 launchErrorAlertDialog(it)
-            }
+            })
         }
     }
 
-    @VisibleForTesting
-    fun launchCreateFragment(){
+    override fun launchCreateFragment(){
         fab.visibility = View.GONE
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, CreateEditFragment.instance).addToBackStack(null).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, CreateEditFragment.getCreateFragment(this)).addToBackStack(null).commit()
     }
 
-    @VisibleForTesting
-    fun launchTransformerListFragment(){
-        //TODO
+    override fun launchTransformerListFragment(){
+        fab.visibility = View.VISIBLE
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment.getInstance(this)).commit()
     }
 
-    @VisibleForTesting
-    fun launchErrorAlertDialog(message : String){
-    AlertDialog.Builder(this).apply {
-            setTitle("An error has occurred")
-            setMessage(message)
-            show()
+    override fun launchEditFragment(transformer: Transformer){
+        fab.visibility = View.GONE
+        val fragment = CreateEditFragment.getEditFragment(transformer, this)
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit()
+    }
+
+    override fun showProgressBar(show : Boolean){
+        if(show){
+            progressBar.visibility = View.VISIBLE
+        }else{
+            progressBar.visibility = View.GONE
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+    override fun launchErrorAlertDialog(message : String){
+    AlertDialog.Builder(this).apply {
+            setTitle(R.string.error_dialog_title)
+            setMessage(message)
+            setPositiveButton(R.string.error_dialog_button) { p0, p1 -> p0.dismiss() }
+        show()
         }
     }
 }
