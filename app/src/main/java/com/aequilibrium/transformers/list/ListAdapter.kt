@@ -11,7 +11,7 @@ import com.aequilibrium.transformers.R
 import com.aequilibrium.transformers.data.model.Transformer
 import com.squareup.picasso.Picasso
 
-class ListAdapter(private val list : MutableList<Transformer>, private val clickListener : ListFragment.TransformersClickListener) : RecyclerView.Adapter<ListAdapter.ListViewHolder>() {
+class ListAdapter(private val list : MutableList<Transformer>, private val clickListener : ListFragment.TransformersClickListener?) : RecyclerView.Adapter<ListAdapter.ListViewHolder>() {
 
     class ListViewHolder(view : View) : RecyclerView.ViewHolder(view){
         val ivImage = view.findViewById<ImageView>(R.id.iv_item_image)
@@ -32,11 +32,11 @@ class ListAdapter(private val list : MutableList<Transformer>, private val click
         holder.tvOverall.text = transformer.getOverall().toString()
         holder.btnDelete.setOnClickListener {
             list.removeAt(position)
-            clickListener.onDeleteClicked(transformer, position)
+            clickListener?.onDeleteClicked(transformer, position)
         }
 
         holder.btnEdit.setOnClickListener {
-            clickListener.onEditClicked(transformer, position)
+            clickListener?.onEditClicked(transformer, position)
         }
 
     }

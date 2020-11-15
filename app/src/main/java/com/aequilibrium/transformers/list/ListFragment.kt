@@ -43,7 +43,8 @@ class ListFragment : Fragment(){
         viewModel.getTransformerList()
     }
 
-    private fun paintTransformers(list : MutableList<Transformer>){
+    @VisibleForTesting
+    fun paintTransformers(list : MutableList<Transformer>){
         mainInterface?.showProgressBar(false)
         adapter = ListAdapter(list, clickListener)
         rvTransformerList.adapter = adapter

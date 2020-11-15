@@ -26,7 +26,7 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
     lateinit var etSkill : EditText
     lateinit var spTeam : Spinner
     lateinit var btnSubmit : Button
-    lateinit var editTransformer : Transformer
+    var editTransformer : Transformer? = null
     var mainInterface: MainActivityInterface? = null
     var isEditing = false
     @VisibleForTesting
@@ -68,7 +68,7 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
         }
 
         (arguments?.get(Transformer::class.java.canonicalName) as? Transformer)?.let {
-           fillFieldsForEditting(it)
+           fillFieldsForEditing(it)
         }
         btnSubmit.setOnClickListener(this)
 
@@ -90,7 +90,8 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
         }
     }
 
-    private fun fillFieldsForEditting(transformer: Transformer){
+    @VisibleForTesting
+    fun fillFieldsForEditing(transformer: Transformer){
         editTransformer = transformer
         tvTitle.text = getString(R.string.edit_transformer)
         etName.setText(transformer.getName())
@@ -138,8 +139,8 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
                 setFirepower(etFirepower.text.toString().toInt())
                 setSkill(etSkill.text.toString().toInt())
                 setTeam(if(spTeam.selectedItemPosition == 0) getString(R.string.a) else getString(R.string.d))
-                if(isEditing)
-                    setId(editTransformer.getId())
+                if(isEditing && editTransformer != null)
+                    setId(editTransformer!!.getId())
             }
 
             if (!isEditing)
@@ -177,12 +178,20 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
                 etStrength.error = getString(R.string.error_digits_only)
                 return false
             }
+            etStrength.text.toString().toInt() !in 0..10 -> {
+                etStrength.error = getString(R.string.error_out_range)
+                return false
+            }
             etIntelligence.text.isEmpty() -> {
                 etIntelligence.error = getString(R.string.error_empty_field)
                 return false
             }
             !etIntelligence.text.isDigitsOnly() -> {
                 etIntelligence.error = getString(R.string.error_digits_only)
+                return false
+            }
+            etIntelligence.text.toString().toInt() !in 0..10 -> {
+                etIntelligence.error = getString(R.string.error_out_range)
                 return false
             }
             etSpeed.text.isEmpty() -> {
@@ -193,12 +202,20 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
                 etSpeed.error = getString(R.string.error_digits_only)
                 return false
             }
+            etSpeed.text.toString().toInt() !in 0..10 -> {
+                etSpeed.error = getString(R.string.error_out_range)
+                return false
+            }
             etEndurance.text.isEmpty() -> {
                 etEndurance.error = getString(R.string.error_empty_field)
                 return false
             }
             !etEndurance.text.isDigitsOnly() -> {
                 etEndurance.error = getString(R.string.error_digits_only)
+                return false
+            }
+            etEndurance.text.toString().toInt() !in 0..10 -> {
+                etEndurance.error = getString(R.string.error_out_range)
                 return false
             }
             etRank.text.isEmpty() -> {
@@ -209,12 +226,20 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
                 etRank.error = getString(R.string.error_digits_only)
                 return false
             }
+            etRank.text.toString().toInt() !in 0..10 -> {
+                etRank.error = getString(R.string.error_out_range)
+                return false
+            }
             etCourage.text.isEmpty() -> {
                 etCourage.error = getString(R.string.error_empty_field)
                 return false
             }
             !etCourage.text.isDigitsOnly() -> {
                 etCourage.error = getString(R.string.error_digits_only)
+                return false
+            }
+            etCourage.text.toString().toInt() !in 0..10 -> {
+                etCourage.error = getString(R.string.error_out_range)
                 return false
             }
             etFirepower.text.isEmpty() -> {
@@ -225,12 +250,20 @@ class CreateEditFragment : Fragment(), View.OnClickListener{
                 etFirepower.error = getString(R.string.error_digits_only)
                 return false
             }
+            etFirepower.text.toString().toInt() !in 0..10 -> {
+                etFirepower.error = getString(R.string.error_out_range)
+                return false
+            }
             etSkill.text.isEmpty() -> {
                 etSkill.error = getString(R.string.error_empty_field)
                 return false
             }
             !etSkill.text.isDigitsOnly() -> {
                 etSkill.error = getString(R.string.error_digits_only)
+                return false
+            }
+            etSkill.text.toString().toInt() !in 0..10 -> {
+                etSkill.error = getString(R.string.error_out_range)
                 return false
             }
             else -> return true

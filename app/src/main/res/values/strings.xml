@@ -36,6 +36,7 @@
     <string name="overall">Overall</string>
 
     <string name="error_empty_field">This field should not be empty</string>
+    <string name="error_out_range">Value should be between 0 and 10</string>
     <string name="error_digits_only">This field should only contain numbers</string>
     <string name="error_dialog_title">An error has occurred</string>
     <string name="error_dialog_button">Close</string>

@@ -2,6 +2,7 @@ package com.aequilibrium.transformers.data.networking
 
 import com.aequilibrium.transformers.BaseTest
 import com.aequilibrium.transformers.data.model.Transformer
+import com.aequilibrium.transformers.data.model.TransformerListResponse
 import com.google.gson.Gson
 import junit.framework.Assert.*
 import okhttp3.mockwebserver.MockResponse
@@ -79,6 +80,61 @@ class RetrofitServiceTest : BaseTest(){
 
         mockWebServer.enqueue(response)
         val receivedTransformer = apiService.createTransformer(transformer).blockingGet()
+        assertNotNull("Transformer item should not be null", receivedTransformer)
+        assertEquals("Transformer received should have the same name as the one sent", transformer.getName(),receivedTransformer.getName())
+    }
+
+    @Test
+    fun getTransformerListTest(){
+        val list = mutableListOf( Transformer(), Transformer())
+        val listResponse = TransformerListResponse().apply {
+            transformers = list
+        }
+        val response = MockResponse()
+                .setResponseCode(HttpURLConnection.HTTP_OK)
+                .setBody(gson.toJson(listResponse))
+
+        mockWebServer.enqueue(response)
+        val receivedTransformerList = apiService.getTransformerList().blockingGet()
+        assertNotNull("Transformer list should not be null", receivedTransformerList)
+        assertEquals("Transformer received should have 2 transformers", 2,receivedTransformerList.transformers.size)
+    }
+
+    @Test
+    fun deleteTransformerTest(){
+        val value = 204
+        val response = MockResponse()
+                .setResponseCode(HttpURLConnection.HTTP_OK)
+                .setBody(value.toString())
+
+        mockWebServer.enqueue(response)
+        val receivedValue = apiService.deleteTransformer("transformerId").blockingGet()
+        assertNotNull("Transformer list should not be null", receivedValue)
+        assertEquals("Transformer received should have 2 transformers", 204,receivedValue)
+    }
+
+    @Test
+    fun editTransformerTest(){
+        val transformer = Transformer().apply {
+            setId("transformer id")
+            setName("name")
+            setStrength(1)
+            setIntelligence(2)
+            setSpeed(3)
+            setEndurance(4)
+            setRank(5)
+            setCourage(6)
+            setFirepower(7)
+            setSkill(8)
+            setTeam("A")
+        }
+
+        val response = MockResponse()
+                .setResponseCode(HttpURLConnection.HTTP_OK)
+                .setBody(gson.toJson(transformer))
+
+        mockWebServer.enqueue(response)
+        val receivedTransformer = apiService.editTransformer(transformer).blockingGet()
         assertNotNull("Transformer item should not be null", receivedTransformer)
         assertEquals("Transformer received should have the same name as the one sent", transformer.getName(),receivedTransformer.getName())
     }
