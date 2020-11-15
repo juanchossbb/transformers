@@ -35,7 +35,17 @@ class ListFragment : Fragment(){
         rvTransformerList.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL, false)
         getTransformerList()
 
-        viewModel.livedata.observe(requireActivity(), { paintTransformers(it)})
+        viewModel.livedata.observe(requireActivity(), {
+            paintTransformers(it)
+            if(it.size>0)
+            btnFight.apply {
+                isEnabled = true
+                setOnClickListener {view->
+                    viewModel.wageWar(it)
+                }
+            }
+        })
+
     }
 
     private fun getTransformerList(){
