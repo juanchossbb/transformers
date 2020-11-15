@@ -1,7 +1,10 @@
 package com.aequilibrium.transformers
 
+import android.view.View
 import android.widget.TextView
 import com.aequilibrium.transformers.createedit.CreateEditFragment
+import com.aequilibrium.transformers.data.model.Transformer
+import com.aequilibrium.transformers.list.ListFragment
 import junit.framework.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -33,13 +36,36 @@ class MainActivityTest : BaseTest(){
     }
 
     @Test
-    fun checkEditCreateFragmentLaunched(){
+    fun createFragmentLaunchedTest(){
         assertTrue("Activity should not have a fragment launched",activity.supportFragmentManager.fragments.isEmpty())
         activity.launchCreateFragment()
         activity.supportFragmentManager.executePendingTransactions()
         assertEquals("Activity should have one fragment attached",1,activity.supportFragmentManager.fragments.size)
         assertEquals("Fragment should be of type CreateEditFragment",
             CreateEditFragment::class.java,activity.supportFragmentManager.fragments[0]::class.java)
+    }
+
+    @Test
+    fun editFragmentLaunchedTest(){
+        assertTrue("Activity should not have a fragment launched",activity.supportFragmentManager.fragments.isEmpty())
+        activity.launchEditFragment(Transformer().apply {
+            setName("transformer name")
+            setTeam("A")
+        })
+        activity.supportFragmentManager.executePendingTransactions()
+        assertEquals("Activity should have one fragment attached",1,activity.supportFragmentManager.fragments.size)
+        assertEquals("Fragment should be of type CreateEditFragment",
+                CreateEditFragment::class.java,activity.supportFragmentManager.fragments[0]::class.java)
+    }
+
+    @Test
+    fun transformerListFragmentLaunchedTest(){
+        assertTrue("Activity should not have a fragment launched",activity.supportFragmentManager.fragments.isEmpty())
+        activity.launchTransformerListFragment()
+        activity.supportFragmentManager.executePendingTransactions()
+        assertEquals("Activity should have one fragment attached",1,activity.supportFragmentManager.fragments.size)
+        assertEquals("Fragment should be of type ListFragment",
+                ListFragment::class.java,activity.supportFragmentManager.fragments[0]::class.java)
     }
 
     @Test
@@ -51,6 +77,11 @@ class MainActivityTest : BaseTest(){
         assertEquals("Alert dialog message should be the same", "error message",dialogMessageView?.text.toString())
     }
 
-
-
+    @Test
+    fun showProgressBarTest(){
+        activity.showProgressBar(false)
+        assertEquals("progressbar should be hidden", View.GONE,activity.progressBar.visibility)
+        activity.showProgressBar(true)
+        assertEquals("progressbar should be showing", View.VISIBLE,activity.progressBar.visibility)
+    }
 }
