@@ -1,6 +1,8 @@
 package com.aequilibrium.transformers.data.model
 
-class BattleResult {
+import java.io.Serializable
+
+class BattleResult : Serializable{
     private  var winner : String? = null
     private lateinit var destroyedTransformers : MutableList<Transformer>
 

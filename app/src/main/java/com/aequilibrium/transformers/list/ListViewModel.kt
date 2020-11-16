@@ -1,5 +1,6 @@
 package com.aequilibrium.transformers.list
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.aequilibrium.transformers.data.Repository
@@ -15,7 +16,7 @@ class ListViewModel : ViewModel(){
     val removeLiveData = MutableLiveData<Int>()
     val errorLiveData = MutableLiveData<String>()
     val battleLiveData = MutableLiveData<BattleResult>()
-    private val totalDestructionEvent = Transformer().apply {
+    val totalDestructionEvent = Transformer().apply {
         setName("total destruction")
     }
 
@@ -83,16 +84,19 @@ class ListViewModel : ViewModel(){
     private fun getBattleResult(destroyedTransformers : MutableList<Transformer>) : BattleResult{
         val destroyedAutobots = destroyedTransformers.filter { it.getTeam() == "A" }.size
         val destroyedDecepticons = destroyedTransformers.filter { it.getTeam() == "D" }.size
-        val winner = if(destroyedAutobots > destroyedDecepticons) "Decepticons"
-                    else if (destroyedAutobots < destroyedDecepticons) "Autobots"
-                    else null
+        val winner = when {
+            destroyedAutobots > destroyedDecepticons -> "Autobots"
+            destroyedAutobots < destroyedDecepticons -> "Decepticons"
+            else -> null
+        }
         return BattleResult().apply {
             setWinner(winner)
             setDestroyedTransformers(destroyedTransformers)
         }
     }
 
-    private fun getLoserByCourage(decepticon : Transformer, autobot : Transformer) : Transformer?{
+    @VisibleForTesting
+    fun getLoserByCourage(decepticon : Transformer, autobot : Transformer) : Transformer?{
         val courageDiff = decepticon.getCourage().toInt() - autobot.getCourage().toInt()
         return when {
             courageDiff >= 4 ->  autobot
@@ -101,7 +105,8 @@ class ListViewModel : ViewModel(){
         }
     }
 
-    private fun getLoserByStrength(decepticon : Transformer, autobot : Transformer) : Transformer?{
+    @VisibleForTesting
+    fun getLoserByStrength(decepticon : Transformer, autobot : Transformer) : Transformer?{
         val strenghtDiff = decepticon.getStrength().toInt() - autobot.getStrength().toInt()
         return when {
             strenghtDiff >= 3 ->  autobot
@@ -110,7 +115,8 @@ class ListViewModel : ViewModel(){
         }
     }
 
-    private fun getLoserByOverall(decepticon : Transformer, autobot : Transformer) : Transformer?{
+    @VisibleForTesting
+    fun getLoserByOverall(decepticon : Transformer, autobot : Transformer) : Transformer?{
         return when {
             decepticon.getOverall() > autobot.getOverall() -> autobot
             decepticon.getOverall() < autobot.getOverall() -> decepticon
@@ -118,7 +124,8 @@ class ListViewModel : ViewModel(){
         }
     }
 
-    private fun getLoserBySpecialRule(decepticon : Transformer, autobot : Transformer) : Transformer?{
+    @VisibleForTesting
+    fun getLoserBySpecialRule(decepticon : Transformer, autobot : Transformer) : Transformer?{
         val names = arrayOf("optimus prime","predaking")
         if (decepticon.getName().toLowerCase() in names){
             return if (autobot.getName().toLowerCase() !in names){

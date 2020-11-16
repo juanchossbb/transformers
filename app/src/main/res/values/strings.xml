@@ -34,6 +34,12 @@
     <string name="a">A</string>
     <string name="d">D</string>
     <string name="overall">Overall</string>
+    <string name="battle_result_title">Battle Result</string>
+    <string name="battle_decepticons_title">Decepticons</string>
+    <string name="battle_autobots_title">Autobots</string>
+    <string name="battle_destroyed">Destroyed Transformers</string>
+    <string name="battle_winner_title">Winner:</string>
+    <string name="battle_tie">Tie</string>
 
     <string name="error_empty_field">This field should not be empty</string>
     <string name="error_out_range">Value should be between 0 and 10</string>

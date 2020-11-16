@@ -1,13 +1,16 @@
 package com.aequilibrium.transformers
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.aequilibrium.transformers.createedit.CreateEditFragment
+import com.aequilibrium.transformers.data.model.BattleResult
 import com.aequilibrium.transformers.data.model.Transformer
+import com.aequilibrium.transformers.list.BattleResultFragment
 import com.aequilibrium.transformers.list.ListFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -47,16 +50,22 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     }
 
     override fun launchCreateFragment(){
+        supportActionBar?.title = getString(R.string.create_transformer)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         fab.visibility = View.GONE
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, CreateEditFragment.getCreateFragment(this)).addToBackStack(null).commit()
     }
 
     override fun launchTransformerListFragment(){
+        supportActionBar?.title = getString(R.string.app_name)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
         fab.visibility = View.VISIBLE
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment.getInstance(this)).commit()
     }
 
     override fun launchEditFragment(transformer: Transformer){
+        supportActionBar?.title = getString(R.string.edit_transformer)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         fab.visibility = View.GONE
         val fragment = CreateEditFragment.getEditFragment(transformer, this)
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit()
@@ -70,6 +79,18 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        supportActionBar?.title = getString(R.string.app_name)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        onBackPressed()
+        fab.visibility = View.VISIBLE
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun launchErrorAlertDialog(message : String){
     AlertDialog.Builder(this).apply {
             setTitle(R.string.error_dialog_title)
@@ -77,5 +98,13 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
             setPositiveButton(R.string.error_dialog_button) { p0, p1 -> p0.dismiss() }
         show()
         }
+    }
+
+    override fun launchBattleResultFragment(result: BattleResult) {
+        supportActionBar?.title = getString(R.string.battle_result_title)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        fab.visibility = View.GONE
+        val fragment = BattleResultFragment.getBattleResultFragment(result)
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment).addToBackStack(null).commit()
     }
 }
